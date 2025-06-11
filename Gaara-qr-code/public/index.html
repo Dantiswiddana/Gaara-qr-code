@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zokou Connect</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2rem; }
+    #qrImage { margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Connecte ton WhatsApp</h1>
+  <p>Choisis une méthode :</p>
+
+  <button onclick="showQR()">📷 QR Code</button>
+  <button onclick="showPairing()">🔢 Pairing Code</button>
+
+  <div id="result"></div>
+
+  <script>
+    const socket = io();
+
+    function showQR() {
+      document.getElementById('result').innerHTML = '<p>Génération du QR code...</p>';
+      socket.on('qr', (dataUrl) => {
+        document.getElementById('result').innerHTML = `<img id="qrImage" src="${dataUrl}" alt="QR Code WhatsApp" width="300" />`;
+      });
+    }
+
+    function showPairing() {
+      const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+      document.getElementById('result').innerHTML = `<h2>Code d'appairage : ${code}</h2>`;
+    }
+
+    socket.on('connected', () => {
+      document.getElementById('result').innerHTML = '<h2>✅ WhatsApp connecté avec succès !</h2>';
+    });
+  </script>
+</body>
+</html>
